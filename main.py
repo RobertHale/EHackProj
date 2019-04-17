@@ -1,7 +1,7 @@
 import subprocess
 
 if __name__ == "__main__":
-	cmd = "nmap -sV 127.0.0.1 -oG output.gnmap"
+	cmd = "nmap -sV 192.168.1.1 -oG output.gnmap"
 	proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
 	output, error = proc.communicate()
 	print("===== nmap done ===========")
@@ -11,3 +11,8 @@ if __name__ == "__main__":
 	brute_out, brute_err = brute_poc.communicate()
 	print("===== brutespray done =====")
 	print(brute_out.decode('utf-8'))
+	cracked_cmd = "cat brutespray-output/21-ftp-success.txt"
+	cracked_proc = subprocess.Popen(cracked_cmd.split(), stdout=subprocess.PIPE)
+	cracked_out, cracked_err = cracked_proc.communicate()
+	print("===== Cracked info ========")
+	print(cracked_out.decode('utf-8'))

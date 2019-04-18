@@ -17,7 +17,7 @@ def clean_up():
 	out, err = proc.communicate()
 
 def run_nmap(ip_range: str):
-	cmd = "nmap -p21,22 --open -sV " + ip_range + " -oG output.gnmap"
+	cmd = "nmap -p21,22,3306 --open -sV " + ip_range + " -oG output.gnmap"
 	proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
 	output, error = proc.communicate()
 	print(output.decode('utf-8'))

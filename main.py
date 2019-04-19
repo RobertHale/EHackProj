@@ -11,7 +11,7 @@ def _parse_args():
 	return args
 
 def clean_up():
-	cmd = "/bin/rm output.gnmap; /bin/rm -rf brutespray-output/*"
+	cmd = "rm output.gnmap; rm -rf brutespray-output/*"
 	proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, shell=True)
 	# following line runs so we wait until we're done cleaning up
 	out, err = proc.communicate()

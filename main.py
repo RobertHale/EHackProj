@@ -115,7 +115,7 @@ if __name__ == "__main__":
 							for filename in files:
 								get_ftp_files(match.group(1), match.group(2), match.group(3), filename)
 					else: 
-						get_ftp_files(match.group(1), match.group(2), match.group(3), args.f)
+						get_ftp_files(match.group(1), match.group(2), match.group(3), args.filepath)
 	# get scp files
 	if ssh_file.is_file():
 		print("==== retreiving info from ssh servers")
@@ -131,7 +131,7 @@ if __name__ == "__main__":
 							for filename in files:
 								get_ssh_files(match.group(1), match.group(2), match.group(3), filename)
 					else: 
-						get_ssh_files(match.group(1), match.group(2), match.group(3), args.f)
+						get_ssh_files(match.group(1), match.group(2), match.group(3), args.filepath)
 
 # maybe use this vvv for ssh
 # sshpass -p 'SuperStrongPassword' scp -C -r admin@192.168.111.142:/home/admin .

@@ -99,6 +99,7 @@ if __name__ == "__main__":
 					if not args.filepath:
 						with open(args.filelist) as files:
 							for filename in files:
+								filename = filename.split()[0]
 								get_ftp_files(match.group(1), match.group(2), match.group(3), filename)
 					else: 
 						get_ftp_files(match.group(1), match.group(2), match.group(3), args.filepath)

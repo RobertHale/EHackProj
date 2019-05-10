@@ -1,0 +1,5 @@
+/etc/shadow
+/etc/passwd
+~/.bash_history
+~/loot.txt
+~/.ssh

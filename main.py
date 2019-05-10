@@ -46,23 +46,11 @@ def get_ftp_files(ip, username, password, filepath=None):
 	if err is not None:
 		print("\tF\tailed to grab all files")
 
-def get_mysql_files(ip, username, password):
-	mkdir = "cd mysql; mkdir " + username + ":" + ip + ";"
-	# make dump file
-	touch = "touch " + username + ":" + ip + "/dump.sql;"
-	mysqldump = "mysqldump --host=" + ip + " --user=" + username + " --password=" + password + " --protocol=tcp --port=3306 --all-databases > " + username + ":" + ip + "/dump.sql;"
-
-	cmd = mkdir + touch + mysqldump
-	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
-	out, err = proc.communicate()
-	if err is not None:
-		print("\t\tfailed to dump database")
-
 def get_ssh_files(ip, username, password, filepath=None):
-	filename = filepath.split('/')
-	filename = filename[-1]
+	# filename = filepath.split('/')
+	# filename = filename[-1]
 	mkdir = "cd ssh; mkdir " + username + ":" + ip + ";"
-	cmd = mkdir + "sshpass -p \"" + password + "\" scp -r " + username + "@" + ip + ":"+ filepath + " " + filename + ";"
+	cmd = mkdir + "sshpass -p \"" + password + "\" scp -r " + username + "@" + ip + ":"+ filepath + " . " + ";"
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
 	if err is not None:

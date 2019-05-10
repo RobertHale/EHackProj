@@ -49,7 +49,7 @@ def get_ftp_files(ip, username, password, filepath=None):
 def get_ssh_files(ip, username, password, filepath=None):
 	# filename = filepath.split('/')
 	# filename = filename[-1]
-	mkdir = "cd ssh; mkdir -p " + username + ":" + ip + ";cd " + username + ":" + ip + ";"
+	mkdir = "mkdir -p " + "ssh/" + username + ":" + ip + ";cd ssh/" + username + ":" + ip + "; "
 	cmd = mkdir + "sshpass -p \"" + password + "\" scp -r " + username + "@" + ip + ":"+ filepath + " . " + ";"
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
@@ -114,8 +114,8 @@ if __name__ == "__main__":
 					print("\tgrabbing scp files from " + str(match.group(2)))
 					if not args.filepath:
 						with open(args.filelist) as files:
-							for filename in files:
-								get_ssh_files(match.group(1), match.group(2), match.group(3), filename)
+							for path in files:
+								get_ssh_files(match.group(1), match.group(2), match.group(3), path)
 					else: 
 						get_ssh_files(match.group(1), match.group(2), match.group(3), args.filepath)
 

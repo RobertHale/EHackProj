@@ -85,7 +85,7 @@ if __name__ == "__main__":
 	# get files from brutespray
 	ftp_file = Path("./brutespray-output/21-ftp-success.txt")
 	ssh_file = Path("./brutespray-output/22-ssh-success.txt")
-	mysql_file = Path("./brutespray-output/3306-mysql-success.txt")
+	# mysql_file = Path("./brutespray-output/3306-mysql-success.txt")
 	# grab files from ftp servers
 	if ftp_file.is_file():
 		print("==== retreiving info from ftp servers")

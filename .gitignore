@@ -5,3 +5,4 @@ mysql/
 ssh/
 __pycache__/
 test.py
+.DS_Store

@@ -99,7 +99,7 @@ if __name__ == "__main__":
 				if match is not None:
 					print("\tgrabbing ftp files from " + str(match.group(2)))
 					if not args.filepath:
-						with open(args.filelist) as files:
+						with open(args.ftp_files) as files:
 							for filename in files:
 								filename = filename.split()[0]
 								get_ftp_files(match.group(1), match.group(2), match.group(3), filename)
@@ -116,7 +116,7 @@ if __name__ == "__main__":
 				if match is not None:
 					print("\tgrabbing scp files from " + str(match.group(2)))
 					if not args.filepath:
-						with open(args.filelist) as files:
+						with open(args.ssh_files) as files:
 							for path in files:
 								get_ssh_files(match.group(1), match.group(2), match.group(3), path)
 					else: 

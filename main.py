@@ -42,7 +42,7 @@ def get_ftp_files(ip, username, password, filepath=None, recursion_depth=5):
 	filename = filename[-1]
 	mkdir = "mkdir -p ftp/" + username + ":" + ip + "; cd ftp/" + username + ":" + ip + ";"
 	# get = "curl ftp://" + username + ":" + password + "@" + ip + filepath + " -o " + filename + ";"
-	get = "wget ftp://" + username + ":" + password + "@" + ip + filepath + " -r + -l + " + recursion_depth + ";"
+	get = "wget ftp://" + username + ":" + password + "@" + ip + filepath + " -r + -l + " + str(recursion_depth) + ";"
 	cmd = mkdir + get
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
@@ -105,7 +105,7 @@ if __name__ == "__main__":
 								filename = filename.split()[0]
 								get_ftp_files(match.group(1), match.group(2), match.group(3), filename, args.ftp_recursion_depth)
 					else: 
-						get_ftp_files(match.group(1), match.group(2), match.group(3), args.filepath, args.ftp_recursion_depth)
+						get_ftp_files(match.group(1), match.group(2), match.group(3), args.filepath, args.ftprecursion_depth)
 	# get scp files
 	if ssh_file.is_file():
 		print("==== retreiving info from ssh servers")

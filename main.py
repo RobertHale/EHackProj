@@ -13,7 +13,8 @@ def _parse_args():
 	parser.add_argument('-t', '--threads', type=int, default=2, help='Number of threads to run on')
 	parser.add_argument('-c', '--clean', type=bool, default=True, help='Clean up files from previous runs')
 	parser.add_argument('-f', '--filepath', type=str, default=None, help='Specify a single filepath to retrieve')
-	parser.add_argument('-fl', '--filelist', type=str, default="files_to_retrieve.txt", help='Specify a .txt file listing the possible filepaths to retrieve')
+	parser.add_argument('-ftpfl', '--ftp_files', type=str, default="files_to_retrieve.txt", help='Specify a .txt file listing the files to retrieve from ftp servers')
+	parser.add_argument('-sshfl', '--ssh_files', type=str, default='ssh_filepaths', help="Specify a .txt file listing the files to retrieve from ssh servers")
 	args = parser.parse_args()
 	return args
 

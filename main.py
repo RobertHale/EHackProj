@@ -17,6 +17,7 @@ def _parse_args():
 	parser.add_argument('-ftpfl', '--ftp_files', type=str, default="ftp_filepaths.txt", help='Specify a .txt file listing the files to retrieve from ftp servers')
 	parser.add_argument('-sshfl', '--ssh_files', type=str, default='ssh_filepaths.txt', help="Specify a .txt file listing the files to retrieve from ssh servers")
 	parser.add_argument('-ftpr', '--ftp_recursion_depth', type=int, default=5, help="Max levels of recursive downloading for each target directory")
+	parser.add_argument('-v', '--verbose', type=bool, default=True, help="Include this flag to display error output for ftp")
 	args = parser.parse_args()
 	return args
 
@@ -114,9 +115,9 @@ _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|    \n \
 						with open(args.ftp_files) as files:
 							for filename in files:
 								filename = filename.split()[0]
-								get_ftp_files(match.group(1), match.group(2), match.group(3), filename, args.ftp_recursion_depth)
+								get_ftp_files(match.group(1), match.group(2), match.group(3), filename, args.ftp_recursion_depth, args.verbose)
 					else: 
-						get_ftp_files(match.group(1), match.group(2), match.group(3), args.filepath, args.ftprecursion_depth)
+						get_ftp_files(match.group(1), match.group(2), match.group(3), args.filepath, args.ftp_recursion_depth, args.verbose)
 	# get scp files
 	if ssh_file.is_file():
 		print("==== retreiving info from ssh servers")

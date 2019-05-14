@@ -110,7 +110,7 @@ _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|    \n \
 				regex = re.compile(r"Host: (.+) User: (.+) Password: (.+) ")
 				match = regex.search(line)
 				with open("ftp_cracked", "a+") as cracked:
-					cracked.write(match.group(2) + ":" + match.group(3))
+					cracked.write(match.group(2) + ":" + match.group(3) + "@" + match.group(1) + "\n")
 				if match is not None:
 					print("\tgrabbing ftp files from " + str(match.group(2)))
 					if not args.filepath:
@@ -129,7 +129,7 @@ _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|    \n \
 				regex = re.compile(r"Host: (.+) User: (.+) Password: (.+) ")
 				match = regex.search(line)
 				with open("ssh_cracked", "a+") as cracked:
-					cracked.write(match.group(2) + ":" + match.group(3))
+					cracked.write(match.group(2) + ":" + match.group(3) + "@" + match.group(1) + "\n")
 				if match is not None:
 					print("\tgrabbing scp files from " + str(match.group(2)))
 					if not args.filepath:

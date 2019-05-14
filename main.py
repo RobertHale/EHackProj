@@ -47,7 +47,7 @@ def get_ftp_files(ip, username, password, filepath=None, recursion_depth=5, verb
 	get = "wget ftp://" + username + ":" + password + "@" + ip + filepath + " -r -l " + str(recursion_depth + 1) + ";"
 	cmd = mkdir + get
 	devnull = subprocess.STDOUT if verbose else open(os.devnull, 'w')
-	if not verbose:
+	if verbose is not None and not verbose:
 		proc = subprocess.Popen(cmd, stdout=devnull, stderr=devnull, shell=True)
 	else:
 		proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)

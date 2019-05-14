@@ -45,9 +45,11 @@ def get_ftp_files(ip, username, password, filepath=None, recursion_depth=5, verb
 	# get = "curl ftp://" + username + ":" + password + "@" + ip + filepath + " -o " + filename + ";"
 	get = "wget ftp://" + username + ":" + password + "@" + ip + filepath + " -r -l " + str(recursion_depth + 1) + ";"
 	cmd = mkdir + get
-	devnull = open(os.devnull, 'w')
-	proc = subprocess.Popen(cmd, stdout=devnull, shell=True)
-	# proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+	devnull = subprocess.STDOUT if verbose else open(os.devnull, 'w')
+	if not verbose:
+		proc = subprocess.Popen(cmd, stdout=devnull, stderr=devnull, shell=True)
+	else:
+		proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
 	if err is not None:
 		print("\tF\tailed to grab all files")
@@ -84,6 +86,14 @@ if __name__ == "__main__":
 		clean_up()
 	# run nmap
 	run_nmap(args.ip)
+	print('''	  _______   ______    __  __   _________  __  __   ______      \
+		/_______/\ /_____/\  /_/\/_/\ /________/\/_/\/_/\ /_____/\     \
+		\::: _  \ \\:::_ \ \ \:\ \:\ \\__.::.__\/\:\ \:\ \\::::_\/_    \
+		\::(_)  \/_\:(_) ) )_\:\ \:\ \  \::\ \   \:\ \:\ \\:\/___/\   \
+		\::  _  \ \\: __ `\ \\:\ \:\ \  \::\ \   \:\ \:\ \\_::._\:\  \
+		\::(_)  \ \\ \ `\ \ \\:\_\:\ \  \::\ \   \:\_\:\ \ /____\:\ \
+			\_______\/ \_\/ \_\/ \_____\/   \__\/    \_____\/ \_____\/ ''')
+                                                               
 	print("==== nmap done")
 	# run brutespray
 	run_brutespray(args.threads)

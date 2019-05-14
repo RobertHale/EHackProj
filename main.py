@@ -40,7 +40,7 @@ def run_brutespray(threads: int):
 def get_ftp_files(ip, username, password, filepath=None, recursion_depth=5):
 	filename = filepath.split('/')
 	filename = filename[-1]
-	mkdir = "mkdir -p ftp/" + username + ":" + ip + "; cd ftp/" + username + ":" + ip + ";"
+	mkdir = "mkdir -p ftp/" + username + "; cd ftp/" + username + ";"
 	# get = "curl ftp://" + username + ":" + password + "@" + ip + filepath + " -o " + filename + ";"
 	get = "wget ftp://" + username + ":" + password + "@" + ip + filepath + " -r -l " + str(recursion_depth) + ";"
 	cmd = mkdir + get

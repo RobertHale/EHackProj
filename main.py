@@ -42,7 +42,7 @@ def get_ftp_files(ip, username, password, filepath=None, recursion_depth=5):
 	filename = filename[-1]
 	mkdir = "mkdir -p ftp/" + username + "; cd ftp/" + username + ";"
 	# get = "curl ftp://" + username + ":" + password + "@" + ip + filepath + " -o " + filename + ";"
-	get = "wget ftp://" + username + ":" + password + "@" + ip + filepath + " -r -l " + str(recursion_depth) + ";"
+	get = "wget ftp://" + username + ":" + password + "@" + ip + filepath + " -r -l " + str(recursion_depth + 1) + ";"
 	cmd = mkdir + get
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
@@ -52,7 +52,7 @@ def get_ftp_files(ip, username, password, filepath=None, recursion_depth=5):
 def get_ssh_files(ip, username, password, filepath=None):
 	# filename = filepath.split('/')
 	# filename = filename[-1]
-	mkdir = "mkdir -p " + "ssh/" + username + ":" + ip + ";cd ssh/" + username + ":" + ip + "; "
+	mkdir = "mkdir -p " + "ssh/" + username + "/" + ip + ";cd ssh/" + username + "/" + ip + "; "
 	cmd = mkdir + "sshpass -p \"" + password + "\" scp -r " + username + "@" + ip + ":"+ filepath + " . " + ";"
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()

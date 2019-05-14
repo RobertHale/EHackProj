@@ -17,7 +17,7 @@ def _parse_args():
 	parser.add_argument('-ftpfl', '--ftp_files', type=str, default="ftp_filepaths.txt", help='Specify a .txt file listing the files to retrieve from ftp servers')
 	parser.add_argument('-sshfl', '--ssh_files', type=str, default='ssh_filepaths.txt', help="Specify a .txt file listing the files to retrieve from ssh servers")
 	parser.add_argument('-ftpr', '--ftp_recursion_depth', type=int, default=5, help="Max levels of recursive downloading for each target directory")
-	parser.add_argument('-v', '--verbose', type=bool, default=True, help="Include this flag to display error output for ftp")
+	parser.add_argument('-v', '--verbose', action="store_true", help="Include this flag to display error output for ftp")
 	args = parser.parse_args()
 	return args
 
@@ -47,10 +47,10 @@ def get_ftp_files(ip, username, password, filepath=None, recursion_depth=5, verb
 	get = "wget ftp://" + username + ":" + password + "@" + ip + filepath + " -r -l " + str(recursion_depth + 1) + ";"
 	cmd = mkdir + get
 	devnull = subprocess.STDOUT if verbose else open(os.devnull, 'w')
-	if verbose is not None and not verbose:
-		proc = subprocess.Popen(cmd, stdout=devnull, stderr=devnull, shell=True)
-	else:
+	if verbose:
 		proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+	else:
+		proc = subprocess.Popen(cmd, stdout=devnull, stderr=devnull, shell=True)
 	out, err = proc.communicate()
 	if err is not None:
 		print("\tF\tailed to grab all files")
@@ -135,6 +135,7 @@ _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|    \n \
 					else: 
 						get_ssh_files(match.group(1), match.group(2), match.group(3), args.filepath)
 
+	print("Elapsed time: ", time.time() - start_time)
 # maybe use this vvv for ssh
 # sshpass -p 'SuperStrongPassword' scp -C -r admin@192.168.111.142:/home/admin .
 

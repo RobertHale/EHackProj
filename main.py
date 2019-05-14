@@ -22,7 +22,7 @@ def _parse_args():
 	return args
 
 def clean_up():
-	cmd = "rm -f output.gnmap; rm -rf brutespray-output; rm -rf ftp; rm -rf mysql; " 
+	cmd = "rm -f output.gnmap; rm -rf brutespray-output; rm -rf ftp; rm -rf mysql; rm -r ssh_cracked ftp_cracked" 
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	# following line runs so we wait until we're done cleaning up
 	out, err = proc.communicate()
@@ -138,4 +138,4 @@ _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|    \n \
 					else: 
 						get_ssh_files(match.group(1), match.group(2), match.group(3), args.filepath)
 
-	print("Elapsed time: ", time.time() - start_time, 's')
+	print("Elapsed time: ", time.time() - start_time, 'seconds')

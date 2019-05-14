@@ -42,7 +42,7 @@ def get_ftp_files(ip, username, password, filepath=None, recursion_depth=5):
 	filename = filename[-1]
 	mkdir = "mkdir -p ftp/" + username + ":" + ip + "; cd ftp/" + username + ":" + ip + ";"
 	# get = "curl ftp://" + username + ":" + password + "@" + ip + filepath + " -o " + filename + ";"
-	get = "wget ftp://" + username + ":" + password + "@" + ip + filepath + " -r + -l + " + str(recursion_depth) + ";"
+	get = "wget ftp://" + username + ":" + password + "@" + ip + filepath + " -r -l " + str(recursion_depth) + ";"
 	cmd = mkdir + get
 	proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	out, err = proc.communicate()

